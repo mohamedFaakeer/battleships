@@ -20,34 +20,41 @@ export function BackgroundMusic() {
       const ctx = new window.AudioContext();
       audioContextRef.current = ctx;
 
-      // Create a complex energetic sound using multiple oscillators
-      // Oscillator 1: Fast pulse lead
+      // Create a soft, atmospheric synth pad using multiple oscillators
+      // Add low-pass filter for warm, muffled tone
+      const lowpass = ctx.createBiquadFilter();
+      lowpass.type = "lowpass";
+      lowpass.frequency.value = 800; // Cutoff at 800Hz for softness
+
+      // Oscillator 1: Low root note (sine)
       const osc1 = ctx.createOscillator();
       const gain1 = ctx.createGain();
       osc1.type = "sine";
-      osc1.frequency.value = 220;
+      osc1.frequency.value = 110;
       osc1.connect(gain1);
-      gain1.connect(ctx.destination);
+      gain1.connect(lowpass);
 
-      // Oscillator 2: Higher lead
+      // Oscillator 2: Fifth interval (sine)
       const osc2 = ctx.createOscillator();
       const gain2 = ctx.createGain();
-      osc2.type = "square";
-      osc2.frequency.value = 330;
+      osc2.type = "sine";
+      osc2.frequency.value = 165;
       osc2.connect(gain2);
-      gain2.connect(ctx.destination);
+      gain2.connect(lowpass);
 
-      // Oscillator 3: Even higher
+      // Oscillator 3: Octave fifth (sine)
       const osc3 = ctx.createOscillator();
       const gain3 = ctx.createGain();
-      osc3.type = "triangle";
-      osc3.frequency.value = 440;
+      osc3.type = "sine";
+      osc3.frequency.value = 220;
       osc3.connect(gain3);
-      gain3.connect(ctx.destination);
+      gain3.connect(lowpass);
 
-      // Gain node for overall volume control
+      lowpass.connect(ctx.destination);
+
+      // Gain node for overall volume control (softer volume, atmospheric pad)
       const masterGain = ctx.createGain();
-      masterGain.gain.value = 0.1;
+      masterGain.gain.value = 0.02;
       masterGain.connect(ctx.destination);
       gainNodeRef.current = masterGain;
 
@@ -55,13 +62,14 @@ export function BackgroundMusic() {
       osc2.start();
       osc3.start();
 
-      // Modulate frequencies over time for evolving, energetic sound
+      // Gentle, subtle frequency sweep for evolving, soft atmospheric sound
       const startTime = ctx.currentTime;
-      const duration = 5; // 5 seconds per cycle
+      const duration = 15; // 15 seconds per cycle (slower, more gradual evolution)
 
-      osc1.frequency.exponentialRampToValueAtTime(440, startTime + duration);
-      osc2.frequency.exponentialRampToValueAtTime(660, startTime + duration);
-      osc3.frequency.exponentialRampToValueAtTime(880, startTime + duration);
+      // Small pitch drift for warmth, not a full octave sweep
+      osc1.frequency.exponentialRampToValueAtTime(130, startTime + duration);
+      osc2.frequency.exponentialRampToValueAtTime(195, startTime + duration);
+      osc3.frequency.exponentialRampToValueAtTime(260, startTime + duration);
 
       // Re-loop after duration
       intervalId = setTimeout(() => {
