@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #0c4a6e;
+    --foreground: #f0f9ff;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    /* Prevent font scaling in landscape on iOS */
+    -webkit-text-size-adjust: 100%;
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ocean-950 text-ocean-50 antialiased;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+    min-height: 100dvh;
+  }
+
+  /* Accessible focus ring — visible on keyboard, hidden on mouse */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ocean-400 rounded-sm;
+  }
+
+  /* Remove default button styles */
+  button {
+    cursor: pointer;
+  }
+}
+
+@layer utilities {
+  /* Ocean shimmer animation for water tiles */
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      theme("colors.ocean.700") 0%,
+      theme("colors.ocean.500") 50%,
+      theme("colors.ocean.700") 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: 200% center; }
+    100% { background-position: -200% center; }
+  }
+
+  /* Safe area padding for notched phones */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+}
